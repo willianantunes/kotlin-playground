@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: Kotlin Playground
+  main:
+    banner-mode: off
