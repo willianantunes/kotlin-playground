@@ -5,3 +5,9 @@ services:
       context: .
     ports:
       - "8080:8080"
+  partner-service:
+    image: clue/json-server
+    ports:
+      - "8090:80"
+    volumes:
+      - "./src/main/resources/db.json:/data/db.json"
