@@ -32,4 +32,24 @@ class PartnerServiceIT(@Autowired val partnerService: PartnerService) {
             assertThat(it.body).isNotBlank()
         }
     }
+
+    @Test
+    fun `Should retrieve specific comment given its ID`() {
+        val comment = partnerService.getCommentById(1)
+
+        assertThat(comment).isNotNull()
+
+        comment?.let {
+            assertThat(it.id).isEqualTo(1)
+            assertThat(it.postId).isEqualTo(1)
+            assertThat(it.body).isEqualTo("baz")
+        }
+    }
+
+    @Test
+    fun `Should retrieve null comment given its ID wasn't found`() {
+        val comment = partnerService.getCommentById(500)
+
+        assertThat(comment).isNull()
+    }
 }
