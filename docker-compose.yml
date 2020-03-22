@@ -11,3 +11,10 @@ services:
       - "8090:80"
     volumes:
       - "./src/main/resources/db.json:/data/db.json"
+  ticker-service:
+    image: node:12-alpine
+    ports:
+      - "8091:8085"
+    volumes:
+      - "./src/test/resources/lag-nodejs-server.js:/app/lag-nodejs-server.js"
+    command: ["node", "/app/lag-nodejs-server.js"]
