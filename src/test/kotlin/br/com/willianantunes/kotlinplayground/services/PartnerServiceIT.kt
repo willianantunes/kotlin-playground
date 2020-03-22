@@ -1,13 +1,42 @@
 package br.com.willianantunes.kotlinplayground.services
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.testcontainers.containers.DockerComposeContainer
+import java.io.File
 
 
 @SpringBootTest
 class PartnerServiceIT(@Autowired val partnerService: PartnerService) {
+    companion object {
+        private val instance: KDockerComposeContainer by lazy { defineDockerCompose() }
+
+        class KDockerComposeContainer(file: File) : DockerComposeContainer<KDockerComposeContainer>(file)
+
+        private fun defineDockerCompose() = KDockerComposeContainer(File("docker-compose.yml"))
+
+        @BeforeAll
+        @JvmStatic
+        internal fun beforeAll() {
+            with(instance) {
+                withServices("partner-service")
+                withLocalCompose(true)
+            }.also {
+                it.start()
+            }
+        }
+
+        @AfterAll
+        @JvmStatic
+        internal fun afterAll() {
+            instance.stop()
+        }
+    }
+
     @Test
     fun `Should retrieve all posts`() {
         val allPosts = partnerService.allPosts()
@@ -44,7 +73,7 @@ class PartnerServiceIT(@Autowired val partnerService: PartnerService) {
 
     @Test
     fun `Should create a new comment given valid request`() {
-        val commentToBeCreated = Comment("Melkor")
+        val commentToBeCreated = Comment("Melkor", postId = 1)
         val createdComment = partnerService.createComment(commentToBeCreated)
 
         assertThat(createdComment).isNotNull()
