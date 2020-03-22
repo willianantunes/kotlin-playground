@@ -39,7 +39,7 @@ class UserControllerIT @Autowired constructor(val restTemplate: TestRestTemplate
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.headers.contentType.toString()).isEqualTo(MediaType.APPLICATION_JSON_VALUE)
         assertThat(entity.body).isEqualTo(
-            """[{"login":"jafar-vizier","firstname":"jafar","lastname":"vizier","description":null,"id":${jafar.id}}]"""
+            """[{"login":"jafar-vizier","firstname":"jafar","lastname":"vizier","id":${jafar.id}}]"""
         )
     }
 
@@ -53,7 +53,7 @@ class UserControllerIT @Autowired constructor(val restTemplate: TestRestTemplate
         assertThat(entity.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(entity.headers.contentType.toString()).isEqualTo(MediaType.APPLICATION_JSON_VALUE)
         assertThat(entity.body).isEqualTo(
-            """{"login":"jafar-vizier","firstname":"jafar","lastname":"vizier","description":null,"id":${jafar.id}}"""
+            """{"login":"jafar-vizier","firstname":"jafar","lastname":"vizier","id":${jafar.id}}"""
         )
     }
 
