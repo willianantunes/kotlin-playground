@@ -21,6 +21,7 @@ import org.springframework.http.converter.HttpMessageConverter
 import org.springframework.http.converter.StringHttpMessageConverter
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter
+import org.springframework.web.client.DefaultResponseErrorHandler
 import org.springframework.web.client.RestTemplate
 
 
@@ -79,4 +80,17 @@ class RestConfiguration {
             return execution.execute(request, body)
         }
     }
+}
+
+/**
+ * By default, the RestTemplate will throw one of these exceptions in case of an HTTP error:
+ *
+ * - HttpClientErrorException – in case of HTTP status 4xx
+ * - HttpServerErrorException – in case of HTTP status 5xx
+ * - UnknownHttpStatusCodeException – in case of an unknown HTTP status
+ *
+ * All these exceptions are extensions of RestClientResponseException.
+ */
+class DoNotThrowExceptionGivenUnexpectedStatusCode : DefaultResponseErrorHandler() {
+    override fun handleError(response: ClientHttpResponse) = Unit
 }
