@@ -8,3 +8,5 @@ partner-service:
   endpoint: http://localhost:8090
   post-path: ${partner-service.endpoint}/posts
   comment-path: ${partner-service.endpoint}/comments
+ticket-service:
+  endpoint: http://localhost:8091
