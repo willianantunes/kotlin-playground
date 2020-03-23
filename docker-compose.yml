@@ -13,6 +13,9 @@ services:
       - "./src/main/resources/db.json:/data/db.json"
   ticker-service:
     image: node:12-alpine
+    environment:
+      - DELAY_ANSWER_MS=1000
+      - PORT=8085
     ports:
       - "8091:8085"
     volumes:

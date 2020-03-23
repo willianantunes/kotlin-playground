@@ -1,30 +1,38 @@
+const http = require('http')
+const url = require('url')
+const querystring = require('querystring')
+
+const timeToBeDelayed = parseInt(process.env.DELAY_ANSWER_MS || 1000)
+console.log(`Time to be delayed in each request: ${timeToBeDelayed}`)
+const fakeDatabaseOfStockPrices = new Map([['GOOG', 1168.19], ['AMZN', 1902.42], ['MSFT', 112.79]])
+const delayResponseToSimulateDelayedConnection = (timeOutBeforeExecution, logic) => setTimeout(logic, timeOutBeforeExecution);
+
 (async function () {
-  var http = require('http')
-  var url = require('url')
-  var querystring = require('querystring')
+  const handleRequests = function (request, response) {
+    const params = querystring.parse(url.parse(request.url).query)
+    const symbol = params.ticker
+    console.log(`Received ticker: ${symbol}`)
 
-  var handler = function (request, response) {
-    var params = querystring.parse(url.parse(request.url).query)
-
-    var write = function (status, message) {
+    const responseWriter = (status, message = '') => {
       response.writeHead(status, { 'Content-Type': 'text/plain' })
-      return response.end(message)
+      return response.end(message.toString())
     }
 
-    var symbol = params.ticker
-
-    const prices = new Map([['GOOG', 1168.19], ['AMZN', 1902.42], ['MSFT', 112.79]])
-
-    setTimeout(() => {
-      if (prices.has(symbol)) {
-        return write(200, '' + prices.get(symbol))
+    const mainLogic = () => {
+      if (fakeDatabaseOfStockPrices.has(symbol)) {
+        const priceFound = fakeDatabaseOfStockPrices.get(symbol)
+        console.log(`It's available! Returning ${priceFound}`)
+        return responseWriter(200, priceFound)
       }
+      console.log(`We don't have nothing for ${symbol}`)
+      return responseWriter(404)
+    }
 
-      return write(404, '')
-    }, 1000)
+    delayResponseToSimulateDelayedConnection(timeToBeDelayed, mainLogic)
   }
 
-  const server = http.createServer(handler)
-  await server.listen(8085)
-  console.log('Now you can consult me!')
-}).call(this)
+  const server = http.createServer(handleRequests)
+  const portToRunServer = process.env.PORT || 8085
+  await server.listen(portToRunServer)
+  console.log(`Now you can consult me on port ${portToRunServer}!`)
+})()
